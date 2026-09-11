@@ -1,13 +1,42 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
+import java.util.ArrayList; // Import the ArrayList class//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+import utils.PrettyConsole; //import the utils
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+static ArrayList<Student> all_students = new ArrayList<Student>();
+
+enum Option {
+    ADD_STUDENT("Add Student"),
+    VIEW_STUDENTS("View Students"),
+    REMOVE_STUDENT("Remove Student"),
+    EXIT("Exit");
+
+    private final String displayName;
+
+    Option(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }
+
+void main() {
+    //entry point
+    PrettyConsole.divider( '=', 50, "Welcome to grade OS");
+    System.out.println();
+
+    PrettyConsole.show_array(all_students);
+    PrettyConsole.divider('=',50);
+    showOptions();
+
+}
+
+void showOptions() {
+    System.out.println();
+    int number = 1;
+    for (Option option : Option.values()) {
+        System.out.println(number + ". " + option.getDisplayName());
+        number++;
+    }
+}
+

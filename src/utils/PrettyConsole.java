@@ -1,11 +1,12 @@
 package utils;
 import java.util.ArrayList;
 
-public class pretty_console {
-    static void blink_text(String text, long wait, boolean not_next_line) {
+public class PrettyConsole {
+    public static void blinkText(String text, long wait, boolean notNextLine) {
 
-        for (char l : text.toCharArray()) {
-            System.out.print(l);
+        for (char letter : text.toCharArray()) {
+            System.out.print(letter);
+
             try {
                 Thread.sleep(wait);
             } catch (InterruptedException e) {
@@ -14,39 +15,21 @@ public class pretty_console {
             }
         }
 
-
-    }
-
-    static void blink_text(String text, long wait) {
-
-        for (char l : text.toCharArray()) {
-            System.out.print(l);
-            try {
-                Thread.sleep(wait);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
+        if (!notNextLine) {
+            System.out.println();
         }
-        System.out.println();
     }
 
-    static void blink_text(String text) {
-
-        for (char l : text.toCharArray()) {
-            System.out.print(l);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
-        System.out.println();
+    public static void blinkText(String text, long wait) {
+        blinkText(text, wait, false);
     }
 
-    static <T> void show_array(ArrayList<T> array) {
-        if (array.isEmpty()){blink_text("There are no students added, please add a new student to continue");}
+    public static void blinkText(String text) {
+        blinkText(text, 50, false);
+    }
+
+    public static <T> void show_array(ArrayList<T> array) {
+        if (array.isEmpty() ){blinkText("There are no students added, please add a new student to continue");  System.out.println(); return;}
 
         int i = 1;
         for (T item : array) {
@@ -55,27 +38,34 @@ public class pretty_console {
         }
     }
 
-    static void divider(String text, char letter, int times){
+
+    public static void divider(char letter, int times){
         for (int i = 0; i<times; i++){
             System.out.print(letter);
         }
 
+    }
+
+    public static void divider(char letter, int times, String text){
+
+        divider(letter , times);
+
+        System.out.println();
         int middle = (int)(times/2 - text.length()/2);
-        for (int i = 0; i<times; i++){
+        for (int i = 0; i<middle; i++){
             System.out.print(" ");
         }
 
-        blink_text(text);
+        blinkText(text);
 
-        for (int i = 0; i<times; i++){
-            System.out.print(letter);
-        }
+        divider(letter , times);
+        System.out.println();
     }
 
-    static void divider(char letter, int times){
-        for (int i = 0; i<times; i++){
-            System.out.print(letter);
-        }
+
+    public static void clearConsole() {
+        System.out.print("\u001b[2J\u001b[H");
+        System.out.flush();
     }
 
 }
