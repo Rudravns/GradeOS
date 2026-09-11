@@ -1,0 +1,15 @@
+modules = ["java-graalvm22.3"]
+
+[workflows]
+runButton = "GradeOS Console"
+
+[[workflows.workflow]]
+name = "GradeOS Console"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "rm -rf out && mkdir -p out && /nix/store/rkvkymsiiranf1hbmv1xbkg913n93mys-openjdk-24.0.1+9/bin/javac --enable-preview --release 24 -d out $(find src -name '*.java' -print) && /nix/store/rkvkymsiiranf1hbmv1xbkg913n93mys-openjdk-24.0.1+9/bin/java --enable-preview -cp out Main"
