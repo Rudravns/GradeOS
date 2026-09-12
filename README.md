@@ -1,412 +1,201 @@
-# GradeForge
+# GradeOS
 
-## Student Gradebook & Performance Analyzer
+GradeOS is a Java console gradebook for managing students, subjects, and weighted grades.
 
-GradeForge is a Java-based student gradebook and performance analysis program. It creates student objects, stores academic information, calculates statistics, compares students, and generates a readable final report.
+It supports:
 
-The project is designed around the **AP Computer Science A Units 1–2** requirements while adding useful features such as **What-If Grade Analysis** and optional **JSON data persistence**.
+- Student profiles with names and grades from 1st through 12th grade
+- Separate gradebooks for each student
+- Standard, AP, and Honors subjects
+- Weighted grade entries
+- Point-based scores such as `5/10`
+- Optional grade tags such as `quiz`, `test`, or `project`
+- Letter grades and GPA values on a 5.0 scale
+- Adding and removing students, subjects, and grades
+- `0` and `quit` commands for leaving menus
 
----
+## Requirements
 
-## Project Goals
-
-GradeForge should demonstrate:
-
-- Java classes and objects
-- Constructors
-- Instance variables
-- Encapsulation
-- Accessor and mutator methods
-- Arithmetic and calculations
-- Integer and decimal division
-- Type casting
-- Compound assignment
-- `Math` methods
-- String methods
-- Clean console output
-- Object state changes
-- Student and class-level grade analysis
-- Optional file persistence using JSON
-
-The goal is to make the project feel like a small, real grade analytics application rather than a collection of disconnected requirement checks.
-
----
+- Windows
+- Java JDK 26 or a compatible JDK
+- The Oracle Java executable must be available on PATH, or installed at the path configured by your machine
 
 ## Project Structure
 
-Recommended IntelliJ project structure:
-
 ```text
-GradeForge/
-│
+GradeOS/
 ├── src/
 │   ├── Main.java
 │   ├── Student.java
-│   └── Gradebook.java
-│
-├── data/
-│   └── students.json
-│
+│   ├── Subject.java
+│   ├── Grade.java
+│   ├── Commands.java
+│   └── utils/
+│       ├── EasierConsole.java
+│       ├── MenuOption.java
+│       └── PrettyConsole.java
+├── .vscode/
+│   ├── launch.json
+│   ├── settings.json
+│   └── tasks.json
 ├── README.md
 └── REQUIREMENTS.md
 ```
 
-### Classes
+### Main classes
 
-### `Student.java`
+- `Main.java` runs the application and controls the menus.
+- `Student.java` stores a student's name, grade level, subjects, overall percentage, letter grade, and GPA.
+- `Subject.java` stores a subject's grades and applies the AP/Honors boost.
+- `Grade.java` stores one named grade entry.
+- `Commands.java` defines menu commands and collects input.
+- `PrettyConsole.java` formats console output and evaluates menu commands.
+- `EasierConsole.java` provides reusable text, integer, decimal, and screen-input helpers.
 
-Represents one student.
+## Running the Application
 
-Responsible for:
+Run these commands from the project root, the folder containing `README.md`:
 
-- Storing student information
-- Returning student information
-- Updating grades
-- Calculating student-level statistics
-- Determining letter grades
-- Performing student-specific calculations
+```powershell
+cd "C:\Rudransh\Projects\GradeOS"
 
-### `Gradebook.java`
+javac -d out src\Main.java src\Student.java src\Subject.java src\Grade.java src\Commands.java src\utils\MenuOption.java src\utils\EasierConsole.java src\utils\PrettyConsole.java
 
-Represents the gradebook/analysis system.
-
-Responsible for:
-
-- Working with multiple Student objects
-- Calculating class-level statistics
-- Comparing students
-- Producing gradebook-level analysis
-
-### `Main.java`
-
-The driver class.
-
-Responsible for:
-
-- Creating Student objects
-- Calling methods
-- Demonstrating required concepts
-- Running the analysis
-- Printing the final report
-
-### `data/students.json`
-
-Optional persistent storage for student information.
-
----
-
-# Core GradeForge Features
-
-## 1. Student Profiles
-
-Each Student object should contain at least five pieces of information.
-
-Possible data:
-
-```text
-Name
-Grade Level
-Math Grade
-Science Grade
-English Grade
-History Grade
+java -cp out Main
 ```
 
-You may change these fields if another set of academic data makes more sense.
+Do not run only `javac Main.java` from the `src` folder. The application depends on several other source files and packages.
 
----
+## VS Code Run Button
 
-## 2. Student Statistics
+The workspace includes a Java launch configuration in `.vscode/launch.json` and a compile task in `.vscode/tasks.json`.
 
-GradeForge should calculate useful statistics such as:
+To run from VS Code:
 
-- Student average
-- Letter grade
-- Highest grade
-- Lowest grade
-- Class average
-- Difference between students
-- Grade improvement
-- Performance score
+1. Open the project root folder in VS Code.
+2. Open `Main.java`.
+3. Select `Run GradeOS` if VS Code asks for a configuration.
+4. Click the top-right run button.
 
----
+Code Runner is configured to use the integrated Terminal instead of the Output panel.
 
-## 3. Student Comparison
-
-The program should compare at least two students.
-
-Possible comparisons:
+## Menu Flow
 
 ```text
-Average Difference
-Highest Individual Grade
-Lowest Individual Grade
-Performance Difference
-Grade Improvement
+Main Menu
+└── View Students
+    ├── Open Gradebook
+    │   └── Manage Subjects
+    │       ├── Add Subject
+    │       ├── Remove Subject
+    │       └── Open Subject Grades
+    │           ├── Add Grade
+    │           └── Remove Grade
+    ├── Add Student
+    └── Remove Student
 ```
+
+The application also has placeholder Save and Load menu entries. Persistence is not implemented yet.
+
+## Student Information
+
+When adding a student, GradeOS asks for:
+
+- Student name
+- Grade level from 1 through 12
+
+The grade level is displayed using an ordinal label, such as:
+
+```text
+1st grade
+2nd grade
+3rd grade
+11th grade
+12th grade
+```
+
+## Subjects
+
+When adding a subject, GradeOS asks for:
+
+- Subject name
+- Whether it is an AP or Honors subject
+
+A subject starts with no grades. It does not display a fake percentage, letter grade, or GPA before grades are entered.
+
+AP and Honors subjects receive a 10 percentage-point boost after their grades are calculated. The result is capped at 100%.
 
 Example:
 
 ```text
-Student A Average: 91.50%
-Student B Average: 87.25%
-Difference: 4.25%
+Raw grade: 78%
+AP/Honors boost: +10%
+Final grade: 88%
 ```
 
----
+## Grades
 
-# Original Feature
+Each grade entry contains:
 
-## What-If Grade Calculator
+- Grade name
+- Score in `scored/total` format
+- Weightage from 0 to 100%
+- Optional tag
 
-The main original feature will be a **What-If Grade Calculator**.
-
-The program can change a student's grade after the Student object has already been created and then calculate the effect.
-
-Example:
+Example input:
 
 ```text
-===== WHAT-IF ANALYSIS =====
-
-Student: Alex Johnson
-
-Original Science Grade: 84%
-New Science Grade: 94%
-
-Original Average: 88.75%
-New Average: 91.25%
-
-Improvement: +2.50%
+Name: Chapter 1 Quiz
+Score: 5/10
+Weightage: 20
+Tag: quiz
 ```
 
-This feature demonstrates object state changes, arithmetic, division, and method calls.
-
----
-
-# Optional Advanced Feature
-
-## JSON Persistence
-
-GradeForge can optionally save and load student information using:
+The grade is displayed like this:
 
 ```text
-data/students.json
+Chapter 1 Quiz: 5.00 / 10.00 (50.00%) | Weight: 20.00% | quiz
 ```
 
-The JSON file may contain:
+A subject's percentage is calculated from the weighted average of its grade entries. Only subjects with at least one grade contribute to the student's overall results.
+
+## GPA and Letter Grades
+
+GradeOS uses a 5.0 GPA scale. The GPA is calculated from the final subject percentage, after any AP/Honors boost.
+
+| Percentage | Letter | GPA |
+|---:|:---:|---:|
+| 97-100 | A+ | 5.0 |
+| 93-96 | A | 4.7 |
+| 90-92 | A- | 4.3 |
+| 87-89 | B+ | 4.0 |
+| 83-86 | B | 3.7 |
+| 80-82 | B- | 3.3 |
+| 77-79 | C+ | 3.0 |
+| 73-76 | C | 2.7 |
+| 70-72 | C- | 2.3 |
+| 60-69 | D | 2.0 |
+| 0-59 | F | 0.0 |
+
+If a student has no grades, the gradebook displays:
 
 ```text
-name
-gradeLevel
-mathGrade
-scienceGrade
-englishGrade
-historyGrade
+No grades entered yet.
 ```
 
-The intended workflow is:
+## Leaving Menus
+
+Every menu accepts either of these commands to go back:
 
 ```text
-students.json
-      ↓
-Read data
-      ↓
-Create Student objects
-      ↓
-Gradebook analysis
-      ↓
-Modify grades / calculate results
-      ↓
-Save updated data
+0
+quit
 ```
 
-JSON persistence is an **extra feature**. The core program should still satisfy all AP CSA Units 1–2 requirements without depending on JSON.
+The normal menu option names and numbers are also supported.
 
----
+## Development Notes
 
-# Example Final Output
+The project currently stores data in memory only. Students, subjects, and grades are reset when the application exits.
 
-The exact values and formatting are up to you.
-
-```text
-========================================
-             GRADEFORGE
-       STUDENT PERFORMANCE ANALYZER
-========================================
-
-STUDENT 1
-Name: Alex Johnson
-Grade Level: 10
-
-Math: 94%
-Science: 87%
-English: 91%
-History: 89%
-
-Average: 90.25%
-Letter Grade: A
-Initials: AJ
-
-----------------------------------------
-
-STUDENT 2
-Name: Maya Patel
-Grade Level: 10
-
-Math: 96%
-Science: 93%
-English: 88%
-History: 95%
-
-Average: 93.00%
-Letter Grade: A
-Initials: MP
-
-----------------------------------------
-
-CLASS ANALYSIS
-
-Class Average: 91.63%
-Average Difference: 2.75%
-Highest Grade: 96%
-
-Higher Average: Maya Patel
-
-----------------------------------------
-
-WHAT-IF ANALYSIS
-
-Alex's Original Average: 90.25%
-Alex's New Average: 92.00%
-Improvement: +1.75%
-
-========================================
-```
-
----
-
-# Development Order
-
-Build GradeForge in this order:
-
-### Phase 1 — Student Class
-
-1. Create `Student.java`.
-2. Add at least five private instance variables.
-3. Include at least one `int` and one `double`.
-4. Create a parameterized constructor.
-5. Create getter/accessor methods.
-6. Create mutator/action methods.
-7. Create the average calculation.
-8. Create the letter-grade calculation.
-9. Add meaningful String methods.
-10. Add a `Math` method.
-
-### Phase 2 — Main
-
-1. Create `Main.java`.
-2. Create at least three Student objects.
-3. Give every student different data.
-4. Call Student methods.
-5. Change at least one Student after creation.
-6. Calculate statistics.
-7. Compare students.
-8. Print the final report.
-
-### Phase 3 — Gradebook
-
-1. Create `Gradebook.java`.
-2. Add class-level calculations.
-3. Calculate class average.
-4. Compare student performance.
-5. Add additional useful analysis.
-
-### Phase 4 — Original Feature
-
-1. Implement the What-If Grade Calculator.
-2. Show the original result.
-3. Change a grade.
-4. Recalculate the result.
-5. Show the difference.
-6. Add a comment explaining the feature.
-
-### Phase 5 — JSON
-
-Only after the core project works:
-
-1. Create `data/students.json`.
-2. Decide on the JSON structure.
-3. Implement writing.
-4. Implement reading.
-5. Test that saved data can be loaded correctly.
-
-### Phase 6 — Testing
-
-1. Compile the entire project.
-2. Run it with different student data.
-3. Check every AP CSA requirement.
-4. Check the final report.
-5. Check the What-If feature.
-6. Test JSON if implemented.
-7. Clean up comments, naming, and formatting.
-
----
-
-# Design Philosophy
-
-GradeForge should follow a simple separation of responsibilities:
-
-```text
-Student
-  ↓
-Student-specific data and calculations
-
-Gradebook
-  ↓
-Multiple-student analysis
-
-Main
-  ↓
-Program execution and final report
-
-JSON
-  ↓
-Optional data persistence
-```
-
-Avoid putting everything inside `Main.java`. The purpose of the class structure is to demonstrate that each object/class has a clear responsibility.
-
----
-
-## Requirements Checklist
-
-See [`REQUIREMENTS.md`](REQUIREMENTS.md) for the complete requirement-by-requirement checklist.
-
----
-
-## Tech Stack
-
-- **Language:** Java
-- **IDE:** IntelliJ IDEA
-- **Project Type:** Java console application
-- **Data Storage:** JSON (optional advanced feature)
-- **Core Concepts:** AP CSA Units 1–2
-
----
-
-## Status
-
-**Current Stage:** Planning
-
-- [ ] Project created in IntelliJ
-- [ ] `Student.java` created
-- [ ] `Gradebook.java` created
-- [ ] `Main.java` created
-- [ ] Student class completed
-- [ ] Required AP CSA concepts completed
-- [ ] Gradebook analysis completed
-- [ ] What-If feature completed
-- [ ] JSON persistence completed
-- [ ] Testing completed
-- [ ] Final report polished
-- [ ] Ready for submission
+The next natural feature is persistence for Save and Load, such as writing student data to a file.

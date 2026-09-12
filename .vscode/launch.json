@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run GradeOS",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "Main",
+      "cwd": "${workspaceFolder}",
+      "classpath": "${workspaceFolder}/out",
+      "preLaunchTask": "Compile GradeOS"
+    }
+  ]
+}

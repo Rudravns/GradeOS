@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile GradeOS",
+      "type": "shell",
+      "command": "\"C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\javac.exe\"",
+      "args": [
+        "-d",
+        "out",
+        "src\\Main.java",
+        "src\\Student.java",
+        "src\\utils\\EasierConsole.java",
+        "src\\utils\\PrettyConsole.java"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
