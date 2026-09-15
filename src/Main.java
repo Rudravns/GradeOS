@@ -1,5 +1,4 @@
-﻿import utils.*;
-import Saver;
+import utils.*;
 public class Main {
 
     /*
@@ -7,6 +6,11 @@ public class Main {
     cd "C:\Rudransh\Projects\GradeOS\src"
     javac *.java utils/*.java
     java Main
+
+    or
+
+    & 'C:/Users/kumar1272/.jdks/openjdk-26.0.2/bin/javac.exe' -d out/production/GradeOS src/Main.java src/Student.java src/utils/PrettyConsole.java
+    & 'C:/Users/kumar1272/.jdks/openjdk-26.0.2/bin/java.exe' -classpath out/production/GradeOS Main
     */
 
     static StudentDatabase all_students = new StudentDatabase();
@@ -273,7 +277,7 @@ public class Main {
                 EasierConsole.clearConsole();
                 PrettyConsole.divider('=', 50, "Open GradeBook");
                 System.out.println();
-                PrettyConsole.show_array(all_students);
+                PrettyConsole.show_array(all_students.toArray());
                 if (!all_students.isEmpty()) {
                     int studentNumber = EasierConsole.inputInt("Enter student number to open his/hers gradebook (0 to cancel): ");
                     if (studentNumber == 0) {
