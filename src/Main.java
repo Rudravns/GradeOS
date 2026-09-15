@@ -1,5 +1,5 @@
-import utils.*;
-
+﻿import utils.*;
+import Saver;
 public class Main {
 
     /*
@@ -9,7 +9,7 @@ public class Main {
     java Main
     */
 
-    static java.util.ArrayList<Student> all_students = new java.util.ArrayList<>();
+    static StudentDatabase all_students = new StudentDatabase();
 
     // MAIN LOOP - Main Menu
     public static void main(String[] args) {
@@ -35,7 +35,7 @@ public class Main {
             PrettyConsole.divider('=', 50, "Students");
             System.out.println();
 
-            PrettyConsole.show_array(all_students);
+            PrettyConsole.show_array(all_students.toArray());
 
             System.out.println();
             PrettyConsole.divider('-', 50);
@@ -302,7 +302,7 @@ public class Main {
                 EasierConsole.clearConsole();
                 PrettyConsole.divider('=', 50, "Remove Students");
                 System.out.println();
-                PrettyConsole.show_array(all_students);
+                PrettyConsole.show_array(all_students.toArray());
                 if (!all_students.isEmpty()) {
                     int studentNumber = EasierConsole.inputInt("Enter student number to remove (0 to cancel): ");
                     if (studentNumber == 0) return false;
