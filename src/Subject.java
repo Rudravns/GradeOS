@@ -1,17 +1,17 @@
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Subject {
-    private final String name;
-    private final boolean advanced;
+public class Subject implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private boolean advanced;
     private final ArrayList<Grade> grades = new ArrayList<>();
 
     public Subject(String name, boolean advanced) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Subject name cannot be empty.");
-        }
-        this.name = name.trim();
-        this.advanced = advanced;
+        setName(name);
+        setAdvanced(advanced);
     }
 
     public String getName() {
@@ -22,7 +22,21 @@ public class Subject {
         return advanced;
     }
 
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Subject name cannot be empty.");
+        }
+        this.name = name.trim();
+    }
+
+    public void setAdvanced(boolean advanced) {
+        this.advanced = advanced;
+    }
+
     public void addGrade(Grade grade) {
+        if (grade == null) {
+            throw new IllegalArgumentException("Grade cannot be null.");
+        }
         grades.add(grade);
     }
 
@@ -33,7 +47,7 @@ public class Subject {
     }
 
     public List<Grade> getGrades() {
-        return grades;
+        return Collections.unmodifiableList(grades);
     }
 
     public boolean hasGrades() {

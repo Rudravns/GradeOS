@@ -147,6 +147,8 @@ public class Commands {
         return new Grade(name, score[0], score[1], weightage, tag);
     }
 
+    
+
     private static double[] inputScore() {
         while (true) {
             String value = EasierConsole.input("Enter score (scored/total, ex: 5/10): ");

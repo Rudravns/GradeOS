@@ -95,7 +95,10 @@ Main Menu
     └── Remove Student
 ```
 
-The application also has placeholder Save and Load menu entries. Persistence is not implemented yet.
+The application saves the current student database as a Java serialized `.ser` file in `Save_data/`.
+Choose **Save Students**, enter a name, and the `.ser` extension is added automatically. Choose
+**Load Students** to see the available `.ser` files, then select one by number. Enter `0` to cancel
+either operation. Files that are not valid GradeOS saves are reported without replacing the current data.
 
 ## Student Information
 
@@ -196,6 +199,5 @@ The normal menu option names and numbers are also supported.
 
 ## Development Notes
 
-The project currently stores data in memory only. Students, subjects, and grades are reset when the application exits.
-
-The next natural feature is persistence for Save and Load, such as writing student data to a file.
+The project stores data in memory while running and can persist the complete student database through
+the Save and Load menu entries.

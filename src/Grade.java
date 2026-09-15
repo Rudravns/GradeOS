@@ -1,28 +1,19 @@
-public class Grade {
-    private final String name;
-    private final double scoredPoints;
-    private final double totalPoints;
-    private final double weightage;
-    private final String tag;
+import java.io.Serializable;
+
+public class Grade implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private double scoredPoints;
+    private double totalPoints;
+    private double weightage;
+    private String tag;
 
     public Grade(String name, double scoredPoints, double totalPoints, double weightage, String tag) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Grade name cannot be empty.");
-        }
-        if (totalPoints <= 0) {
-            throw new IllegalArgumentException("Total points must be greater than 0.");
-        }
-        if (scoredPoints < 0 || scoredPoints > totalPoints) {
-            throw new IllegalArgumentException("Scored points must be between 0 and total points.");
-        }
-        if (weightage <= 0 || weightage > 100) {
-            throw new IllegalArgumentException("Grade weightage must be between 0 and 100%.");
-        }
-        this.name = name.trim();
-        this.scoredPoints = scoredPoints;
-        this.totalPoints = totalPoints;
-        this.weightage = weightage;
-        this.tag = tag == null ? "" : tag.trim();
+        setName(name);
+        setTotalPoints(totalPoints);
+        setScoredPoints(scoredPoints);
+        setWeightage(weightage);
+        setTag(tag);
     }
 
     public double getPercentage() {
@@ -35,6 +26,62 @@ public class Grade {
 
     public double getWeightage() {
         return weightage;
+    }
+
+    public double getScoredPoints() {
+        return scoredPoints;
+    }
+
+    public double getTotalPoints() {
+        return totalPoints;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Grade name cannot be empty.");
+        }
+        this.name = name.trim();
+    }
+
+    public void setScoredPoints(double scoredPoints) {
+        validateFinite(scoredPoints);
+        if (scoredPoints < 0 || scoredPoints > totalPoints) {
+            throw new IllegalArgumentException("Scored points must be between 0 and total points.");
+        }
+        this.scoredPoints = scoredPoints;
+    }
+
+    public void setTotalPoints(double totalPoints) {
+        validateFinite(totalPoints);
+        if (totalPoints <= 0) {
+            throw new IllegalArgumentException("Total points must be greater than 0.");
+        }
+        if (scoredPoints > totalPoints) {
+            throw new IllegalArgumentException("Total points cannot be less than scored points.");
+        }
+        this.totalPoints = totalPoints;
+    }
+
+    public void setWeightage(double weightage) {
+        validateFinite(weightage);
+        if (weightage <= 0 || weightage > 100) {
+            throw new IllegalArgumentException("Grade weightage must be between 0 and 100%.");
+        }
+        this.weightage = weightage;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag == null ? "" : tag.trim();
+    }
+
+    private void validateFinite(double value) {
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Grade values must be finite numbers.");
+        }
     }
 
     @Override

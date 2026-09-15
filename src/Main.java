@@ -1,4 +1,12 @@
+import Saver.ReadFile;
+import Saver.SaveFile;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
 import utils.*;
+
 public class Main {
 
     /*
@@ -11,9 +19,17 @@ public class Main {
 
     & 'C:/Users/kumar1272/.jdks/openjdk-26.0.2/bin/javac.exe' -d out/production/GradeOS src/Main.java src/Student.java src/utils/PrettyConsole.java
     & 'C:/Users/kumar1272/.jdks/openjdk-26.0.2/bin/java.exe' -classpath out/production/GradeOS Main
+
+
+    to fix the bom issue?
+    $path = 'src\Main.java'; $bytes = [System.IO.File]::ReadAllBytes($path); if ($bytes.Length -ge 3 -and $bytes[0] -eq 239 -and $bytes[1] -eq 187 -and $bytes[2] -eq 191) { [System.IO.File]::WriteAllBytes($path, $bytes[3..($bytes.Length - 1)]) };
+     $sources = Get-ChildItem -Path src -Recurse -Filter *.java | ForEach-Object { $_.FullName }; 
+     & 'C:\Users\kumar1272\.jdks\openjdk-26.0.2\bin\javac.exe' -d out\production\GradeOS $sources; Write-Output 
+     "javac exit code: $LASTEXITCODE"
     */
 
     static StudentDatabase all_students = new StudentDatabase();
+    private static final String SAVE_FOLDER = "Save_data";
 
     // MAIN LOOP - Main Menu
     public static void main(String[] args) {
@@ -219,6 +235,11 @@ public class Main {
                             EasierConsole.clearConsole();
                             PrettyConsole.divider('=', 50, "Remove Grade");
                             System.out.println();
+                            List<Grade> grade = subject.getGrades();
+                            for (int i = 0; i<grade.size() ;i++){
+                                PrettyConsole.blinkText(Integer.toString(i + 1)+". " + grade.get(i));
+                            }
+                            PrettyConsole.divider('-', 50);
                             int gradeNumber = EasierConsole.inputInt("Enter grade number to remove (0 to cancel): ");
                             if (gradeNumber > 0 && !subject.removeGrade(gradeNumber - 1)) {
                                 System.out.println("That grade number does not exist.");
@@ -248,18 +269,10 @@ public class Main {
                 showStudents();
                 break;
             case SAVE_STUDENTS:
-                EasierConsole.clearConsole();
-                PrettyConsole.divider('=', 50, "Save Students");
-                System.out.println();
-                System.out.println("Save has not been implemented yet.");
-                PrettyConsole.pause();
+                saveStudents();
                 break;
             case LOAD_STUDENTS:
-                EasierConsole.clearConsole();
-                PrettyConsole.divider('=', 50, "Load Students");
-                System.out.println();
-                System.out.println("Load has not been implemented yet.");
-                PrettyConsole.pause();
+                loadStudents();
                 break;
             case EXIT:
                 EasierConsole.clearConsole();
@@ -268,6 +281,91 @@ public class Main {
                 PrettyConsole.blinkText("Goodbye! See you next time.");
                 System.exit(0);
         }
+    }
+
+    private static void saveStudents() {
+        EasierConsole.clearConsole();
+        PrettyConsole.divider('=', 50, "Save Students");
+        System.out.println();
+
+        String fileName = promptSaveFileName();
+        if (fileName == null) return;
+
+        if (SaveFile.save(all_students, fileName, SAVE_FOLDER)) {
+            System.out.println("Saved successfully as " + fileName + ".");
+        } else {
+            System.out.println("The save could not be written.");
+        }
+        PrettyConsole.pause();
+    }
+
+    private static String promptSaveFileName() {
+        while (true) {
+            String fileName = EasierConsole.input("Enter save name (0 to cancel): ").trim();
+            if (fileName.equals("0") || fileName.equalsIgnoreCase("quit")) return null;
+            if (fileName.isEmpty()) {
+                System.out.println("Save name cannot be empty.");
+                continue;
+            }
+            if (!fileName.endsWith(".ser")) fileName += ".ser";
+            if (fileName.matches(".*[<>:\"/\\\\|?*].*")) {
+                System.out.println("Use a file name without path separators or special characters.");
+                continue;
+            }
+            return fileName;
+        }
+    }
+
+    private static void loadStudents() {
+        EasierConsole.clearConsole();
+        PrettyConsole.divider('=', 50, "Load Students");
+        System.out.println();
+
+        List<Path> saveFiles;
+        try {
+            Path saveDirectory = Path.of(SAVE_FOLDER);
+            if (!Files.exists(saveDirectory)) {
+                saveFiles = List.of();
+            } else {
+                try (var fileStream = Files.list(saveDirectory)) {
+                    saveFiles = fileStream
+                            .filter(path -> path.getFileName().toString().toLowerCase().endsWith(".ser"))
+                            .sorted(Comparator.comparing(path -> path.getFileName().toString().toLowerCase()))
+                            .toList();
+                }
+            }
+        } catch (IOException exception) {
+            saveFiles = List.of();
+        }
+
+        if (saveFiles.isEmpty()) {
+            System.out.println("No save files found.");
+            PrettyConsole.pause();
+            return;
+        }
+
+        for (int index = 0; index < saveFiles.size(); index++) {
+            System.out.println((index + 1) + ". " + saveFiles.get(index).getFileName());
+        }
+        System.out.println();
+
+        int selection = EasierConsole.inputInt("Enter save number to load (0 to cancel): ");
+        if (selection == 0) return;
+        if (selection < 1 || selection > saveFiles.size()) {
+            System.out.println("That save number does not exist.");
+            PrettyConsole.pause();
+            return;
+        }
+
+        Object loadedObject = ReadFile.read(
+                saveFiles.get(selection - 1).getFileName().toString(), SAVE_FOLDER);
+        if (loadedObject instanceof StudentDatabase loadedDatabase) {
+            all_students = loadedDatabase;
+            System.out.println("Loaded " + saveFiles.get(selection - 1).getFileName() + " successfully.");
+        } else {
+            System.out.println("That file is not a valid GradeOS save.");
+        }
+        PrettyConsole.pause();
     }
 
     // STUDENT MENU HANDLERS - returns true to signal going back to main menu

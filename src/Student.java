@@ -1,16 +1,19 @@
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Student {
+public class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    private final String name;
-    private final int year;
+    private String name;
+    private int year;
     private final ArrayList<Subject> subjects = new ArrayList<>();
 
     public Student(String name, int year) {
-        this.name = name;
-        this.year = year;
+        setName(name);
+        setYear(year);
     }
 
     public String getName() {
@@ -19,6 +22,24 @@ public class Student {
 
     public int getYear(boolean number) {
         return year;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Student name cannot be empty.");
+        }
+        this.name = name.trim();
+    }
+
+    public void setYear(int year) {
+        if (year < 1 || year > 12) {
+            throw new IllegalArgumentException("Student grade must be between 1 and 12.");
+        }
+        this.year = year;
     }
 
     public String getGradeLabel() {
@@ -35,6 +56,9 @@ public class Student {
     }
 
     public void addSubject(Subject subject) {
+        if (subject == null) {
+            throw new IllegalArgumentException("Subject cannot be null.");
+        }
         subjects.add(subject);
     }
 
@@ -45,7 +69,7 @@ public class Student {
     }
 
     public List<Subject> getSubjects() {
-        return subjects;
+        return Collections.unmodifiableList(subjects);
     }
 
     public boolean hasGrades() {
